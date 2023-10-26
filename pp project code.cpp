@@ -1,78 +1,64 @@
 #include <iostream>
-#include <curl/curl.h>
 #include <string>
 
 using namespace std;
 
-string httpGET(const string &url){
-	
-}
-class Product{
-	private:
-		string product_name;
-		
-	public:
-		Product(){
-			cout<<"Enter product name: ";
-			cin>> product_name;
-		}
-		
-		Product(const string &name) : product_name(name){}
-		
-		friend float amazon_price(const Product &name);
-		friend float flipcart_price(const Product &name);
+class Product {
+protected:
+    string name;
+    double price;
+
+public:
+    Product(const string& n, double p) : name(n), price(p) {}
+
+    virtual void display() {
+        cout << "Product Name: " << name << endl;
+        cout << "Price: " << price << endl;
+    }
+
+    double get_price() {
+        return price;
+    }
 };
 
-float amazon_price(const Product &name){
-	string amazon_URL = "https://www.amazon.com/search?q=" + name.product_name;
-	string amazon_Response = httpGET(amazon_URL);
-	
-	float price;
-	cout<<"Enter amazon price You Wish: ";
-	cin>> price;
-	
-	cout << "Amazon Price: Rs. " << price << endl;
-	return price;
-}
+class Laptop : public Product {
+public:
+    Laptop(const string& n, double p) : Product(n, p) {}
 
-float flipcart_price(const Product &name){
-	string flipcart_URL = "https://www.flipcart.com/search?q=" + name.product_name;
-	string flipcart_Response = httpGET(flipcart_URL);
-	
-	float price;
-	cout<<"Enter flipcart price You Wish: ";
-	cin>> price;
-	
-	cout << "Flipcart Price: Rs. " << price << endl;
-	return price;
-}
+    void display() override {
+        cout << "Laptop Name: " << name << endl;
+        cout << "Price: " << price << endl;
+    }
+};
+
+class Smartphone : public Product {
+public:
+    Smartphone(const string& n, double p) : Product(n, p) {}
+
+    void display() override {
+        cout << "Smartphone Name: " << name << endl;
+        cout << "Price: " << price << endl;
+    }
+};
 
 int main() {
-    int choice;
-    Product name;
-    cout << "Menu:"<< endl;
-    cout << "1. Get Amazon Price: "<< endl;
-    cout << "2. Get Flipcart Price: "<< endl;
-    cout << "3. Exit "<< endl;
-    
-    cout << "Enter choice: ";
-    cin >> choice;
-    
-    switch(choice){
-    	case 1:
-    		amazon_price(name);
-    		
-    	case 2:
-    		flipcart_price(name);
-    		
-    	case 3:
-    		cout << "Process Terminated..." << endl;
-    		break;
-    		
-    		
-    	default:
-    		cout << "Invalid Choice!!" << endl << "Please Try Again..." << endl;
-	}
-	
-	return 0;
+    Laptop laptop("Intel ABC", 83455.15);
+    Smartphone smartphone("Samsung XYZ", 40000.0);
+
+    Product* products[] = {&laptop, &smartphone};
+
+    cout << "Product Information:\n";
+    for (int i = 0; i < 2; i++) {
+        products[i]->display();
+    }
+
+    if (laptop.get_price() < smartphone.get_price()) {
+        cout << "Laptop is cheaper than Smartphone.\n";
+    } else if (laptop.get_price() > smartphone.get_price()) {
+        cout << "Smartphone is cheaper than Laptop.\n";
+    } else {
+        cout << "Laptop and Smartphone have the same price.\n";
+    }
+
+    return 0;
 }
